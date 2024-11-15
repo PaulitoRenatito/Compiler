@@ -1,7 +1,7 @@
 package cefet.lexical.strategy;
 
-import cefet.lexical.token.FloatNumber;
-import cefet.lexical.token.IntegerNumber;
+import cefet.lexical.token.FloatNumberToken;
+import cefet.lexical.token.IntegerNumberToken;
 import cefet.lexical.Lexer;
 import cefet.lexical.token.Token;
 
@@ -16,7 +16,7 @@ public class NumberStrategy implements TokenStrategy {
             } while (Character.isDigit(lexer.getCurrentChar()));
 
             if (lexer.getCurrentChar() != '.') {
-                return new IntegerNumber(value);
+                return new IntegerNumberToken(value);
             }
 
             float x = value;
@@ -27,7 +27,7 @@ public class NumberStrategy implements TokenStrategy {
                 x = x + Character.digit(lexer.getCurrentChar(), 10) / d;
                 d = d * 10;
             }
-            return new FloatNumber(x);
+            return new FloatNumberToken(x);
         }
         return null;
     }
