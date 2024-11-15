@@ -42,7 +42,6 @@ public enum TokenType {
     OPEN_BRACE("{"),
     CLOSE_BRACE("}"),
 
-
     SEMICOLON(";"),
     COMMA(","),
     DOT("."),
@@ -51,7 +50,8 @@ public enum TokenType {
     IDENTIFIER("identifier"),
     INTEGER_CONSTANT("integer"),
     FLOAT_CONSTANT("float"),
-    LITERAL("literal");
+    LITERAL("literal"),
+    ERROR("error");
 
     private final String string;
 
