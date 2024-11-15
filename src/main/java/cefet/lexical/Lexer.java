@@ -1,9 +1,6 @@
 package cefet.lexical;
 
-import cefet.lexical.strategy.IdentifierStrategy;
-import cefet.lexical.strategy.NumberStrategy;
-import cefet.lexical.strategy.OperatorStrategy;
-import cefet.lexical.strategy.TokenStrategy;
+import cefet.lexical.strategy.*;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
 import cefet.lexical.token.Word;
@@ -24,7 +21,10 @@ public class Lexer {
     private HashMap<String, Word> words = new HashMap<>();
 
     private final List<TokenStrategy> strategies = List.of(
-            new OperatorStrategy(),
+            new ArithmeticOperatorStrategy(),
+            new RelationalOperatorStrategy(),
+            new LogicalOperatorStrategy(),
+            new PunctuationStrategy(),
             new NumberStrategy(),
             new IdentifierStrategy()
     );
@@ -53,7 +53,12 @@ public class Lexer {
 
     @SneakyThrows
     public void readch() {
-        currentChar = (char) file.read();
+        int ch = file.read();
+        if (ch == -1) {
+            currentChar = '$';
+            return;
+        }
+        currentChar = (char) ch;
     }
 
     public boolean readch(char c) {
@@ -68,19 +73,17 @@ public class Lexer {
     public Token scan() {
         // Ignore white spaces
         for (;; readch()) {
-            if (currentChar == ' ' || currentChar == '\t') {
-                continue;
-            } else if (currentChar == '\n') {
-                incrementLine();
-            } else {
-                break;
-            }
+            if (currentChar == ' ' || currentChar == '\t' || currentChar == '\r' || currentChar == '\b') continue;
+            else if (currentChar == '\n') incrementLine();
+            else break;
         }
 
         for (TokenStrategy strategy : strategies) {
             Token t = strategy.identifyToken(this);
             if (t != null) return t;
         }
+
+        if (currentChar == '$') return new Token(TokenType.END);
 
         Token t = new Token(TokenType.ERROR);
         currentChar = ' ';
@@ -90,5 +93,4 @@ public class Lexer {
     private static void incrementLine() {
         currentLine++;
     }
-
 }

@@ -1,7 +1,17 @@
 package cefet;
 
+import cefet.lexical.Lexer;
+import cefet.lexical.token.Token;
+import cefet.lexical.token.TokenType;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        Lexer lexer = new Lexer(args[0]);
+        Token token;
+
+        do {
+            token = lexer.scan();
+            System.out.println(token);
+        } while (token.getType() != TokenType.END);
     }
 }
