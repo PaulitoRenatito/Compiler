@@ -17,7 +17,14 @@ public enum TokenType {
     SCAN("scan"),
     PRINT("print"),
 
-    // relop
+    // arithmetic operators
+    PLUS("+"),
+    MINUS("-"),
+    MULTIPLY("*"),
+    DIVIDE("/"),
+    MOD("%"),
+
+    // relational operators
     EQUAL("=="),
     GREATER(">"),
     GREATER_EQUAL(">="),
@@ -25,18 +32,11 @@ public enum TokenType {
     LESS_EQUAL("<="),
     NOT_EQUAL("!="),
 
-    // addop
-    PLUS("+"),
-    MINUS("-"),
+    // logical operators
     OR("||"),
-
-    // mulop
-    TIMES("*"),
-    DIVIDE("/"),
-    MOD("%"),
     AND("&&"),
 
-    // brackets
+    // punctuation
     OPEN_BRACKET("("),
     CLOSE_BRACKET(")"),
     OPEN_BRACE("{"),

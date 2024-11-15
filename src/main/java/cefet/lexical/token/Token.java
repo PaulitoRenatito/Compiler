@@ -1,8 +1,11 @@
 package cefet.lexical.token;
 
+import lombok.Getter;
+
+@Getter
 public class Token {
 
-    public final TokenType type;
+    private final TokenType type;
 
     public Token(TokenType type) {
         this.type = type;
