@@ -1,6 +1,7 @@
 package cefet.lexical;
 
 import cefet.lexical.strategy.*;
+import cefet.lexical.token.ReservedWord;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
 import cefet.lexical.token.Word;
@@ -33,18 +34,18 @@ public class Lexer {
     public Lexer(String filename) {
         file = new FileReader(filename);
 
-        reserve(new Word(TokenType.START, "start"));
-        reserve(new Word(TokenType.END, "end"));
-        reserve(new Word(TokenType.INT, "int"));
-        reserve(new Word(TokenType.FLOAT, "float"));
-        reserve(new Word(TokenType.STRING, "string"));
-        reserve(new Word(TokenType.IF, "if"));
-        reserve(new Word(TokenType.THEN, "then"));
-        reserve(new Word(TokenType.ELSE, "else"));
-        reserve(new Word(TokenType.DO, "do"));
-        reserve(new Word(TokenType.WHILE, "while"));
-        reserve(new Word(TokenType.SCAN, "scan"));
-        reserve(new Word(TokenType.PRINT, "print"));
+        reserve(new ReservedWord(TokenType.START, "start"));
+        reserve(new ReservedWord(TokenType.END, "end"));
+        reserve(new ReservedWord(TokenType.INT, "int"));
+        reserve(new ReservedWord(TokenType.FLOAT, "float"));
+        reserve(new ReservedWord(TokenType.STRING, "string"));
+        reserve(new ReservedWord(TokenType.IF, "if"));
+        reserve(new ReservedWord(TokenType.THEN, "then"));
+        reserve(new ReservedWord(TokenType.ELSE, "else"));
+        reserve(new ReservedWord(TokenType.DO, "do"));
+        reserve(new ReservedWord(TokenType.WHILE, "while"));
+        reserve(new ReservedWord(TokenType.SCAN, "scan"));
+        reserve(new ReservedWord(TokenType.PRINT, "print"));
     }
 
     private void reserve(Word w) {
