@@ -1,10 +1,10 @@
 package cefet.lexical.token;
 
-public class IntegerNumber extends Token {
+public class IntegerNumberToken extends Token {
 
     public final int value;
 
-    public IntegerNumber(int value) {
+    public IntegerNumberToken(int value) {
         super(TokenType.INTEGER_CONSTANT);
         this.value = value;
     }
