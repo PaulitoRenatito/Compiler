@@ -1,9 +1,9 @@
 package cefet.lexical.strategy;
 
 import cefet.lexical.Lexer;
-import cefet.lexical.Token;
-import cefet.lexical.TokenType;
-import cefet.lexical.Word;
+import cefet.lexical.token.Token;
+import cefet.lexical.token.TokenType;
+import cefet.lexical.token.Word;
 
 public class IdentifierStrategy implements TokenStrategy {
     @Override

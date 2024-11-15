@@ -1,4 +1,4 @@
-package cefet.lexical;
+package cefet.lexical.token;
 
 public class FloatNumber extends Token {
 

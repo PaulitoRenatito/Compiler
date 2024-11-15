@@ -4,6 +4,9 @@ import cefet.lexical.strategy.IdentifierStrategy;
 import cefet.lexical.strategy.NumberStrategy;
 import cefet.lexical.strategy.OperatorStrategy;
 import cefet.lexical.strategy.TokenStrategy;
+import cefet.lexical.token.Token;
+import cefet.lexical.token.TokenType;
+import cefet.lexical.token.Word;
 import lombok.Getter;
 import lombok.SneakyThrows;
 

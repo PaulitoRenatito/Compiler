@@ -1,9 +1,9 @@
 package cefet.lexical.strategy;
 
-import cefet.lexical.FloatNumber;
-import cefet.lexical.IntegerNumber;
+import cefet.lexical.token.FloatNumber;
+import cefet.lexical.token.IntegerNumber;
 import cefet.lexical.Lexer;
-import cefet.lexical.Token;
+import cefet.lexical.token.Token;
 
 public class NumberStrategy implements TokenStrategy {
     @Override
