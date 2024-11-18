@@ -84,7 +84,7 @@ public class Lexer {
             if (t != null) return t;
         }
 
-        if (currentChar == '$') return new Token(TokenType.END);
+        if (currentChar == '$') return new Token(TokenType.END_OF_FILE);
 
         Token t = new Token(TokenType.ERROR);
         currentChar = ' ';

@@ -47,6 +47,7 @@ public enum TokenType {
     DOT("."),
 
     // others
+    END_OF_FILE("EOF"),
     IDENTIFIER("identifier"),
     INTEGER_CONSTANT("integer"),
     FLOAT_CONSTANT("float"),
