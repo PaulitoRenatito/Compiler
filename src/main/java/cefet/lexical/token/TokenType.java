@@ -40,8 +40,6 @@ public enum TokenType {
     // punctuation
     OPEN_BRACKET("("),
     CLOSE_BRACKET(")"),
-    OPEN_BRACE("{"),
-    CLOSE_BRACE("}"),
 
     SEMICOLON(";"),
     COMMA(","),
