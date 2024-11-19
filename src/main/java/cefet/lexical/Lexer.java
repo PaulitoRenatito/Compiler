@@ -15,6 +15,8 @@ import java.util.List;
 @Getter
 public class Lexer {
 
+    public static final char EOF_UNICODE = '\uffff';
+
     public static int currentLine = 1;
     private char currentChar = ' ';
     private final FileReader file;
@@ -27,7 +29,8 @@ public class Lexer {
             new LogicalOperatorStrategy(),
             new PunctuationStrategy(),
             new NumberStrategy(),
-            new IdentifierStrategy()
+            new IdentifierStrategy(),
+            new LiteralStrategy()
     );
 
     @SneakyThrows
@@ -55,10 +58,6 @@ public class Lexer {
     @SneakyThrows
     public void readch() {
         int ch = file.read();
-        if (ch == -1) {
-            currentChar = '$';
-            return;
-        }
         currentChar = (char) ch;
     }
 
@@ -84,7 +83,7 @@ public class Lexer {
             if (t != null) return t;
         }
 
-        if (currentChar == '$') return new Token(TokenType.END_OF_FILE);
+        if (currentChar == EOF_UNICODE) return new Token(TokenType.END_OF_FILE);
 
         Token t = new Token(TokenType.ERROR);
         currentChar = ' ';
