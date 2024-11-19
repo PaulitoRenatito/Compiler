@@ -33,6 +33,7 @@ public enum TokenType {
     NOT_EQUAL("!="),
 
     // logical operators
+    NOT("!"),
     OR("||"),
     AND("&&"),
 
@@ -47,6 +48,7 @@ public enum TokenType {
     DOT("."),
 
     // others
+    ASSIGN("="),
     END_OF_FILE("EOF"),
     IDENTIFIER("identifier"),
     INTEGER_CONSTANT("integer"),
