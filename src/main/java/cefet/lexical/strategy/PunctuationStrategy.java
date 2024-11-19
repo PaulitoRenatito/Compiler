@@ -14,12 +14,6 @@ public class PunctuationStrategy implements TokenStrategy {
             case ')':
                 lexer.readch();
                 return new Token(TokenType.CLOSE_BRACKET);
-            case '{':
-                lexer.readch();
-                return new Token(TokenType.OPEN_BRACE);
-            case '}':
-                lexer.readch();
-                return new Token(TokenType.CLOSE_BRACE);
             case ';':
                 lexer.readch();
                 return new Token(TokenType.SEMICOLON);
