@@ -12,6 +12,6 @@ public class Main {
         do {
             token = lexer.scan();
             System.out.println(token + " at line " + Lexer.currentLine);
-        } while (token.getType() != TokenType.END);
+        } while (token.getType() != TokenType.END_OF_FILE);
     }
 }
