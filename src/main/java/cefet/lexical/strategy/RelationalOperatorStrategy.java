@@ -11,7 +11,7 @@ public class RelationalOperatorStrategy implements TokenStrategy {
         switch (lexer.getCurrentChar()) {
             case '=':
                 if (lexer.readch('=')) return OperatorToken.EQUAL;
-                else return new Token(TokenType.ERROR);
+                else return new Token(TokenType.ASSIGN);
             case '>':
                 if (lexer.readch('=')) return OperatorToken.GREATER_EQUAL;
                 else return OperatorToken.GREATER;
@@ -20,7 +20,7 @@ public class RelationalOperatorStrategy implements TokenStrategy {
                 else return OperatorToken.LESS;
             case '!':
                 if (lexer.readch('=')) return OperatorToken.NOT_EQUAL;
-                else return new Token(TokenType.ERROR);
+                else return new Token(TokenType.NOT);
             default:
                 return null;
         }
