@@ -1,10 +1,7 @@
 package cefet.lexical;
 
 import cefet.lexical.strategy.*;
-import cefet.lexical.token.ReservedWord;
-import cefet.lexical.token.Token;
-import cefet.lexical.token.TokenType;
-import cefet.lexical.token.Word;
+import cefet.lexical.token.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -85,7 +82,7 @@ public class Lexer {
 
         if (currentChar == EOF_UNICODE) return new Token(TokenType.END_OF_FILE);
 
-        Token t = new Token(TokenType.ERROR);
+        Token t = new ErrorToken(TokenType.ERROR, "Invalid character: '" + currentChar + "'", currentLine);
         currentChar = ' ';
         return t;
     }

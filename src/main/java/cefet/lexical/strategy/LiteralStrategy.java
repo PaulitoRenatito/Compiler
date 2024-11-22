@@ -1,6 +1,7 @@
 package cefet.lexical.strategy;
 
 import cefet.lexical.Lexer;
+import cefet.lexical.token.ErrorToken;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
 import cefet.lexical.token.Word;
@@ -17,7 +18,7 @@ public class LiteralStrategy implements TokenStrategy {
                 sb.append(lexer.getCurrentChar());
                 lexer.readch();
                 if (lexer.getCurrentChar() == EOF_UNICODE)
-                    return new Token(TokenType.ERROR);
+                    return new ErrorToken(TokenType.ERROR, "Unexpected EOF", Lexer.currentLine);
             } while (lexer.getCurrentChar() != '}');
 
             sb.append(lexer.getCurrentChar());

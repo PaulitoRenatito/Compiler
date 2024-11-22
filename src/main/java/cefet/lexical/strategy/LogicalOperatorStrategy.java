@@ -1,6 +1,7 @@
 package cefet.lexical.strategy;
 
 import cefet.lexical.Lexer;
+import cefet.lexical.token.ErrorToken;
 import cefet.lexical.token.OperatorToken;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
@@ -11,10 +12,10 @@ public class LogicalOperatorStrategy implements TokenStrategy {
         switch (lexer.getCurrentChar()) {
             case '|':
                 if (lexer.readch('|')) return OperatorToken.OR;
-                return new Token(TokenType.ERROR);
+                return new ErrorToken(TokenType.ERROR, "Unexpected character: '|'", Lexer.currentLine);
             case '&':
                 if (lexer.readch('&')) return OperatorToken.AND;
-                return new Token(TokenType.ERROR);
+                return new ErrorToken(TokenType.ERROR, "Unexpected character: '&'", Lexer.currentLine);
             default:
                 return null;
         }
