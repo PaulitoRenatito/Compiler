@@ -82,6 +82,18 @@ public class Lexer {
                 while (currentChar != '\n' && currentChar != EOF_UNICODE) readch();
                 return scan();
             }
+            else if (currentChar == '*') {
+                while (true) {
+                    readch();
+                    if (currentChar == '*') {
+                        readch();
+                        if (currentChar == '/') {
+                            readch();
+                            return scan();
+                        }
+                    }
+                }
+            }
         }
 
         for (TokenStrategy strategy : strategies) {
