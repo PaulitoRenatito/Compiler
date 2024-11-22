@@ -3,6 +3,7 @@ package cefet;
 import cefet.lexical.Lexer;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
+import cefet.lexical.utils.TokenPrinter;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,7 +12,7 @@ public class Main {
 
         do {
             token = lexer.scan();
-            System.out.println(token + " at line " + Lexer.currentLine);
+            TokenPrinter.printToken(token);
         } while (token.getType() != TokenType.END_OF_FILE);
     }
 }
