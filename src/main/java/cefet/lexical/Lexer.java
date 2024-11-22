@@ -75,6 +75,15 @@ public class Lexer {
             else break;
         }
 
+        // Ignore comments
+        if (currentChar == '/') {
+            readch();
+            if (currentChar == '/') {
+                while (currentChar != '\n' && currentChar != EOF_UNICODE) readch();
+                return scan();
+            }
+        }
+
         for (TokenStrategy strategy : strategies) {
             Token t = strategy.identifyToken(this);
             if (t != null) return t;
