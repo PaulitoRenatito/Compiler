@@ -14,14 +14,16 @@ public class LiteralStrategy implements TokenStrategy {
         if (lexer.getCurrentChar() == '{') {
             StringBuilder sb = new StringBuilder();
 
-            do {
-                sb.append(lexer.getCurrentChar());
+            while (true) {
                 lexer.readch();
+                if (lexer.getCurrentChar() == '}') {
+                    break;
+                }
+                sb.append(lexer.getCurrentChar());
                 if (lexer.getCurrentChar() == EOF_UNICODE)
                     return new ErrorToken(TokenType.ERROR, "Unexpected EOF", Lexer.currentLine);
-            } while (lexer.getCurrentChar() != '}');
+            }
 
-            sb.append(lexer.getCurrentChar());
             lexer.readch();
 
             return new Word(TokenType.LITERAL, sb.toString());

@@ -17,7 +17,7 @@ public class TokenPrinter {
             return;
         }
 
-        System.out.println(token + " at line " + Lexer.currentLine);
+        System.out.println("Token: " + token + " at line " + Lexer.currentLine);
     }
 
 }

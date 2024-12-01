@@ -36,6 +36,7 @@ public class Lexer {
 
         reserve(new ReservedWord(TokenType.START, "start"));
         reserve(new ReservedWord(TokenType.END, "end"));
+        reserve(new ReservedWord(TokenType.EXIT, "exit"));
         reserve(new ReservedWord(TokenType.INT, "int"));
         reserve(new ReservedWord(TokenType.FLOAT, "float"));
         reserve(new ReservedWord(TokenType.STRING, "string"));
@@ -86,6 +87,10 @@ public class Lexer {
             else if (currentChar == '*') {
                 while (true) {
                     readch();
+                    if(currentChar == '\n'){
+                        incrementLine();
+                    }
+                    if (currentChar == EOF_UNICODE) return new ErrorToken(TokenType.ERROR, "Unexpected EOF", Lexer.currentLine);
                     if (currentChar == '*') {
                         readch();
                         if (currentChar == '/') {
@@ -94,6 +99,7 @@ public class Lexer {
                         }
                     }
                 }
+
             }
             else {
                 currentChar = previousChar;
