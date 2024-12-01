@@ -90,7 +90,7 @@ public class Lexer {
                     if(currentChar == '\n'){
                         incrementLine();
                     }
-                    if (currentChar == EOF_UNICODE) return new Token(TokenType.UNEXPECTED_EOF);
+                    if (currentChar == EOF_UNICODE) return new ErrorToken(TokenType.ERROR, "Unexpected EOF", Lexer.currentLine);
                     if (currentChar == '*') {
                         readch();
                         if (currentChar == '/') {

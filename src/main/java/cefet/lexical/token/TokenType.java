@@ -49,7 +49,6 @@ public enum TokenType {
     // others
     ASSIGN("="),
     END_OF_FILE("EOF"),
-    UNEXPECTED_EOF("Unexpected EOF"),
     IDENTIFIER("identifier"),
     INTEGER_CONSTANT("integer"),
     FLOAT_CONSTANT("float"),
