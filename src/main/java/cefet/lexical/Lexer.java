@@ -86,6 +86,9 @@ public class Lexer {
             else if (currentChar == '*') {
                 while (true) {
                     readch();
+                    if(currentChar == '\n'){
+                        incrementLine();
+                    }
                     if (currentChar == '*') {
                         readch();
                         if (currentChar == '/') {
