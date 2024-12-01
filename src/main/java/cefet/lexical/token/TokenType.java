@@ -6,6 +6,7 @@ public enum TokenType {
     // reserved words
     START("start"),
     END("end"),
+    EXIT("exit"),
     INT("int"),
     FLOAT("float"),
     STRING("string"),
