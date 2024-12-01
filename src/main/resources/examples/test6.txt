@@ -1,0 +1,26 @@
+start
+    int a;
+    float b;
+    string c, d;
+
+    a = 10;
+    b = 20.5;
+    c = {hello};
+    d = {world};
+
+    if a == 10 then
+        print(c);
+    end
+
+    if b >= 20.5 then
+        print(d);
+    else
+        scan(a);
+    end
+
+    do
+        a = a + 1;
+        b = b * 2;
+    while a < 15 end
+
+exit

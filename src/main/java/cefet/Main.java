@@ -10,7 +10,7 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-        String path = "src/main/resources/examples/test1.txt";
+        String path = "src/main/resources/examples/test3.txt";
 
         File file = new File(path);
         if (!file.exists()) {
