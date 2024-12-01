@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class Lexer {
@@ -118,7 +119,15 @@ public class Lexer {
         return t;
     }
 
+    public void printWords(){
+         System.out.println("\nTabela de Símbolos:");
+        for (Map.Entry<String, Word> entrada : words.entrySet()) {
+            System.out.println("Símbolo: " + entrada.getKey() + " -> " + entrada.getValue());
+        }
+    }
+
     private static void incrementLine() {
         currentLine++;
     }
+
 }

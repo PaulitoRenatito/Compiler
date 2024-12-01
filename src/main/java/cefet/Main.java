@@ -14,5 +14,7 @@ public class Main {
             token = lexer.scan();
             TokenPrinter.printToken(token);
         } while (token.getType() != TokenType.END_OF_FILE);
+
+        lexer.printWords();
     }
 }
