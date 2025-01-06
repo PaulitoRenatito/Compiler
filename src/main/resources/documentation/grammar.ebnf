@@ -19,8 +19,10 @@ read-stmt ::= SCAN "(" identifier ")"
 write-stmt ::= PRINT "(" writable ")"
 writable ::= simple-expr | literal
 expression ::= simple-expr | simple-expr relop simple-expr
-simple-expr ::= term | simple-expr addop term
-term ::= factor-a | term mulop factor-a
+simple-expr ::= term simple-expr-prime
+simple-expr-prime ::= addop term simple-expr-prime | λ
+term ::= factor-a term-prime
+term-prime ::= mulop factor-a term-prime | λ
 fator-a ::= factor | "!" factor | "-" factor
 factor ::= identifier | constant | "(" expression ")"
 
