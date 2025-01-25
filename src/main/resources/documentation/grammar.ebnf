@@ -23,7 +23,7 @@ simple-expr ::= term simple-expr-prime
 simple-expr-prime ::= addop term simple-expr-prime | λ
 term ::= factor-a term-prime
 term-prime ::= mulop factor-a term-prime | λ
-fator-a ::= factor | "!" factor | "-" factor
+factor-a ::= factor | "!" factor | "-" factor
 factor ::= identifier | constant | "(" expression ")"
 
 # TOKENS

@@ -1,20 +1,19 @@
 package cefet;
 
 import cefet.lexical.Lexer;
-import cefet.lexical.token.Token;
-import cefet.lexical.token.TokenType;
-import cefet.lexical.utils.TokenPrinter;
+import cefet.syntatic.SyntaticAnalysis;
 
 public class Main {
     public static void main(String[] args) {
         Lexer lexer = new Lexer(args[0]);
-        Token token;
+        SyntaticAnalysis syntaticAnalysis = new SyntaticAnalysis(lexer);
 
-        do {
-            token = lexer.scan();
-            TokenPrinter.printToken(token);
-        } while (token.getType() != TokenType.END_OF_FILE);
-
-        lexer.printWords();
+        
+        try {
+            syntaticAnalysis.procProgram();
+            System.out.println("Programa sintaticamente correto.");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
