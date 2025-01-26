@@ -9,7 +9,6 @@ public class SyntaticAnalysis {
     private final Lexer lex;
     private Token current;
 
-
     public SyntaticAnalysis(Lexer lex) {
         this.lex = lex;
         this.current = lex.scan();
@@ -48,9 +47,7 @@ public class SyntaticAnalysis {
         return false;
     }
 
-
-
-//    program ::= START [decl-list] stmt-list EXIT
+    // program ::= START [decl-list] stmt-list EXIT
     public void procProgram(){
         eat(TokenType.START);
 
@@ -66,9 +63,7 @@ public class SyntaticAnalysis {
         eat(TokenType.EXIT);
     }
 
-
-
-//  decl-list ::= decl {decl}
+    // decl-list ::= decl {decl}
     private void procDeclList(){
         procDecl();
 
@@ -77,14 +72,14 @@ public class SyntaticAnalysis {
         }
     }
 
-//    decl ::= type ident-list ';'
+    // decl ::= type ident-list ';'
     private void procDecl(){
         procType();
         procIdentList();
         eat(TokenType.SEMICOLON);
     }
 
-//    ident-list ::= identifier {',' identifier}
+    // ident-list ::= identifier {',' identifier}
     private void procIdentList(){
         eat(TokenType.IDENTIFIER);
 
@@ -94,7 +89,7 @@ public class SyntaticAnalysis {
         }
     }
 
-//    type ::= INT | FLOAT | STRING
+    // type ::= INT | FLOAT | STRING
     private void procType(){
         if (check(TokenType.INT, TokenType.FLOAT, TokenType.STRING)) {
             advance();
@@ -103,7 +98,7 @@ public class SyntaticAnalysis {
         }
     }
 
-//    stmt-list ::= stmt {stmt}
+    // stmt-list ::= stmt {stmt}
     private void procStmtList(){
         procStmt();
 
@@ -112,7 +107,7 @@ public class SyntaticAnalysis {
         }
     }
 
-//    stmt ::= assing-stmt ';' | if-stmt | while-stmt | read-stmt ';' | write-stmt ';'
+    // stmt ::= assing-stmt ';' | if-stmt | while-stmt | read-stmt ';' | write-stmt ';'
     private void procStmt(){
         switch (current.getType()) {
             case IDENTIFIER: 
@@ -143,15 +138,15 @@ public class SyntaticAnalysis {
         }
     }
 
-//    assign-stmt ::= identifier '=' simple_expr
+    // assign-stmt ::= identifier '=' simple_expr
     private void procAssignStmt(){
         eat(TokenType.IDENTIFIER);
         eat(TokenType.ASSIGN);
         procSimpleExpr();
     }
 
-//    if-stmt ::= IF condition THEN stmt-list END
-//                | IF condition THEN stmt-list else stmt-list END
+    // if-stmt ::= IF condition THEN stmt-list END
+    //             | IF condition THEN stmt-list else stmt-list END
     private void procIfStmt(){
         eat(TokenType.IF);
         procCondition();
@@ -166,26 +161,26 @@ public class SyntaticAnalysis {
         eat(TokenType.END);
     }
 
-//    condition ::= expression
+    // condition ::= expression
     private void procCondition(){
         procExpression();
     }
 
-//    while-stmt ::= DO stmt-list stmt-sufix
+    // while-stmt ::= DO stmt-list stmt-sufix
     private void procWhileStmt(){
         eat(TokenType.DO);
         procStmtList();
         procStmtSufix();
     }
 
-//    stmt-sufix ::= WHILE condition END
+    // stmt-sufix ::= WHILE condition END
     private void procStmtSufix(){
         eat(TokenType.WHILE);
         procCondition();
         eat(TokenType.END);
     }
 
-//    read-stmt ::= SCAN "(" identifier ")"
+    // read-stmt ::= SCAN "(" identifier ")"
     private void procReadStmt(){
         eat(TokenType.SCAN);
         eat(TokenType.OPEN_BRACKET);
@@ -193,7 +188,7 @@ public class SyntaticAnalysis {
         eat(TokenType.CLOSE_BRACKET);
     }
 
-//    write-stmt ::= PRINT "(" writable ")"
+    // write-stmt ::= PRINT "(" writable ")"
     private void procWriteStmt(){
         eat(TokenType.PRINT);
         eat(TokenType.OPEN_BRACKET);
@@ -201,7 +196,7 @@ public class SyntaticAnalysis {
         eat(TokenType.CLOSE_BRACKET);
     }
 
-//    writable ::= simple-expr | literal
+    // writable ::= simple-expr | literal
     private void procWritable(){
         if(check(TokenType.NOT, TokenType.MINUS, TokenType.IDENTIFIER, TokenType.INTEGER_CONSTANT, TokenType.FLOAT_CONSTANT, TokenType.OPEN_BRACKET)) {
             procSimpleExpr();
@@ -210,7 +205,7 @@ public class SyntaticAnalysis {
         }
     }
 
-//    expression ::= simple-expr | simple-expr relop simple-expr
+    // expression ::= simple-expr | simple-expr relop simple-expr
     private void procExpression(){
         procSimpleExpr();
 
@@ -220,13 +215,13 @@ public class SyntaticAnalysis {
         }
     }
 
-//    simple-expr ::= term simple-expr-prime
+    // simple-expr ::= term simple-expr-prime
     private void procSimpleExpr(){
         procTerm();
         procSimpleExprPrime();
     }
 
-//    simple-expr-prime ::= addop term simple-expr-prime | λ
+    // simple-expr-prime ::= addop term simple-expr-prime | λ
     private void procSimpleExprPrime(){
         if (check(TokenType.PLUS, TokenType.MINUS, TokenType.OR)) {
             advance();
@@ -235,13 +230,13 @@ public class SyntaticAnalysis {
         }
     }
 
-//    term ::= factor-a term-prime
+    // term ::= factor-a term-prime
     private void procTerm(){
         procFactorA();
         procTermPrime();
     }
 
-//    term-prime ::= mulop factor-a term-prime | λ
+    // term-prime ::= mulop factor-a term-prime | λ
     private void procTermPrime(){
         if (check(TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MOD, TokenType.AND)) {
             advance();
@@ -250,7 +245,7 @@ public class SyntaticAnalysis {
         }
     }
 
-//    factor-a ::= factor | "!" factor | "-" factor
+    // factor-a ::= factor | "!" factor | "-" factor
     private void procFactorA(){
         if (check(TokenType.NOT, TokenType.MINUS)) {
             advance();
@@ -259,7 +254,7 @@ public class SyntaticAnalysis {
         procFactor();
     }
 
-//   factor ::= identifier | constant | "(" expression ")"
+    // factor ::= identifier | constant | "(" expression ")"
     private void procFactor(){
         if (check(TokenType.IDENTIFIER, TokenType.INTEGER_CONSTANT, TokenType.FLOAT_CONSTANT, TokenType.LITERAL)) {
             advance();
