@@ -15,8 +15,8 @@ public class SyntaticAnalysis {
     }
     
     private void advance() {
-        System.out.println("Found (\"" + current.toString() + "\", " +
-            current.getType().toString() + ")");
+        //System.out.println("Found (\"" + current.toString() + "\", " +
+        //    current.getType().toString() + ")");
         current = lex.scan();
     }
 
