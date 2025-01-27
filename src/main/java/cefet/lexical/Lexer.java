@@ -79,7 +79,6 @@ public class Lexer {
 
         // Ignore comments
         if (currentChar == '/') {
-            char previousChar = currentChar;
             readch();
             if (currentChar == '/') {
                 while (currentChar != '\n' && currentChar != EOF_UNICODE) readch();
@@ -103,7 +102,7 @@ public class Lexer {
 
             }
             else {
-                currentChar = previousChar;
+                return new Token(TokenType.DIVIDE);
             }
         }
 
