@@ -3,15 +3,24 @@ package cefet.syntatic;
 import cefet.lexical.Lexer;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
+import cefet.lexical.token.Word;
+import cefet.semantic.SemanticException;
+import cefet.semantic.SymbolTable;
 
 public class SyntaticAnalysis {
     
     private final Lexer lex;
     private Token current;
 
+    private final SymbolTable symbolTable;
+
+
+
     public SyntaticAnalysis(Lexer lex) {
         this.lex = lex;
         this.current = lex.scan();
+        this.symbolTable = new SymbolTable();
+
     }
     
     private void advance() {
@@ -74,27 +83,36 @@ public class SyntaticAnalysis {
 
     // decl ::= type ident-list ';'
     private void procDecl(){
-        procType();
-        procIdentList();
+        TokenType type = procType();
+        procIdentList(type);
         eat(TokenType.SEMICOLON);
     }
 
     // ident-list ::= identifier {',' identifier}
-    private void procIdentList(){
+    private void procIdentList(TokenType type){
+        Word word = (Word) current;
+        String id = word.getLexeme();
         eat(TokenType.IDENTIFIER);
+        symbolTable.addSymbol(id, type, Lexer.currentLine);
 
         while (current.getType() == TokenType.COMMA) {
             advance();
+            Word nextIdent = (Word) current;
+            String nextId = nextIdent.getLexeme();
             eat(TokenType.IDENTIFIER);
+            symbolTable.addSymbol(nextId, type, Lexer.currentLine);
         }
     }
 
     // type ::= INT | FLOAT | STRING
-    private void procType(){
+    private TokenType procType(){
+        TokenType type = current.getType ();
         if (check(TokenType.INT, TokenType.FLOAT, TokenType.STRING)) {
             advance();
+            return type;
         } else {
             reportError();
+            return TokenType.ERROR;
         }
     }
 
@@ -123,7 +141,7 @@ public class SyntaticAnalysis {
                 procWhileStmt();
                 break;
 
-            case SCAN: 
+            case SCAN:
                 procReadStmt(); 
                 eat(TokenType.SEMICOLON);
                 break;
@@ -140,9 +158,16 @@ public class SyntaticAnalysis {
 
     // assign-stmt ::= identifier '=' simple_expr
     private void procAssignStmt(){
+        Word word = (Word) current;
+        String id = word.getLexeme();
         eat(TokenType.IDENTIFIER);
+        TokenType varType = symbolTable.getType(id, Lexer.currentLine);
+
         eat(TokenType.ASSIGN);
-        procSimpleExpr();
+        TokenType exprType = procSimpleExpr();
+        if (!isCompatible(varType, exprType)) {
+            throw new SemanticException ( "Type mismatch: Cannot assign " + exprType + " to " + varType);
+        }
     }
 
     // if-stmt ::= IF condition THEN stmt-list END
@@ -163,7 +188,10 @@ public class SyntaticAnalysis {
 
     // condition ::= expression
     private void procCondition(){
-        procExpression();
+        TokenType type = procExpression();
+        if (type != TokenType.INT) {
+            throw new SemanticException("Condition must be boolean-compatible (int type)");
+        }
     }
 
     // while-stmt ::= DO stmt-list stmt-sufix
@@ -206,19 +234,43 @@ public class SyntaticAnalysis {
     }
 
     // expression ::= simple-expr | simple-expr relop simple-expr
-    private void procExpression(){
-        procSimpleExpr();
+    private TokenType procExpression() {
+        TokenType leftType = procSimpleExpr();
 
-        if (check(TokenType.EQUAL, TokenType.NOT_EQUAL, TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
+        if (check(TokenType.EQUAL, TokenType.NOT_EQUAL,
+                TokenType.GREATER, TokenType.GREATER_EQUAL,
+                TokenType.LESS, TokenType.LESS_EQUAL)) {
+            TokenType op = current.getType();
             advance();
-            procSimpleExpr();
+            TokenType rightType = procSimpleExpr();
+
+            // Relational operations always return INT (boolean)
+            checkRelationalOp(op, leftType, rightType);
+            return TokenType.INT;
         }
+
+        return leftType;
+    }
+
+    private void checkRelationalOp(TokenType op, TokenType left, TokenType right) {
+        // Allow comparisons between numeric types
+        if ((left == TokenType.INT || left == TokenType.FLOAT) &&
+                (right == TokenType.INT || right == TokenType.FLOAT)) {
+            return;
+        }
+
+        // Allow string comparisons
+        if (left == TokenType.STRING && right == TokenType.STRING) {
+            return;
+        }
+
+        throw new SemanticException("Cannot compare " + left + " and " + right + " with " + op);
     }
 
     // simple-expr ::= term simple-expr-prime
-    private void procSimpleExpr(){
-        procTerm();
-        procSimpleExprPrime();
+    private TokenType procSimpleExpr(){
+        TokenType termType = procTerm();
+        return procSimpleExprPrime(termType);
     }
 
     // simple-expr-prime ::= addop term simple-expr-prime | λ
@@ -231,40 +283,111 @@ public class SyntaticAnalysis {
     }
 
     // term ::= factor-a term-prime
-    private void procTerm(){
-        procFactorA();
-        procTermPrime();
+    private TokenType procTerm() {
+        TokenType factorType = procFactorA();
+        return procTermPrime(factorType);
     }
 
     // term-prime ::= mulop factor-a term-prime | λ
-    private void procTermPrime(){
+    private TokenType procTermPrime(TokenType leftType) {
         if (check(TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MOD, TokenType.AND)) {
+            TokenType op = current.getType();
             advance();
-            procFactorA();
-            procTermPrime();
+            TokenType rightType = procFactorA();
+            TokenType resultType = checkBinaryOp(op, leftType, rightType);
+            return procTermPrime(resultType);
         }
+        return leftType;
     }
 
     // factor-a ::= factor | "!" factor | "-" factor
-    private void procFactorA(){
+    private TokenType procFactorA() {
         if (check(TokenType.NOT, TokenType.MINUS)) {
             advance();
+            // Handle unary operators
+            TokenType type = procFactor();
+            if (current.getType() == TokenType.NOT && type != TokenType.INT) {
+                throw new SemanticException("Cannot apply NOT operator to non-integer type");
+            }
+            if (current.getType() == TokenType.MINUS && !(type == TokenType.INT || type == TokenType.FLOAT)) {
+                throw new SemanticException("Cannot apply negation to non-numeric type");
+            }
+            return type;
         }
-
-        procFactor();
+        return procFactor();
     }
 
     // factor ::= identifier | constant | "(" expression ")"
-    private void procFactor(){
-        if (check(TokenType.IDENTIFIER, TokenType.INTEGER_CONSTANT, TokenType.FLOAT_CONSTANT, TokenType.LITERAL)) {
+    private TokenType procFactor() {
+        if (check(TokenType.IDENTIFIER)) {
+            Word word = (Word) current;
+            String id = word.getLexeme();
             advance();
-        } else if (check(TokenType.OPEN_BRACKET)) {
-            advance();
-            procExpression();
-            eat(TokenType.CLOSE_BRACKET);
-        } else {
-            reportError();
+            return symbolTable.getType(id, Lexer.currentLine);
         }
-    } 
+        else if (check(TokenType.INTEGER_CONSTANT)) {
+            advance();
+            return TokenType.INT;
+        }
+        else if (check(TokenType.FLOAT_CONSTANT)) {
+            advance();
+            return TokenType.FLOAT;
+        }
+        else if (check(TokenType.LITERAL)) {
+            advance();
+            return TokenType.STRING;
+        }
+        else if (check(TokenType.OPEN_BRACKET)) {
+            advance();
+            TokenType type = procExpression();
+            eat(TokenType.CLOSE_BRACKET);
+            return type;
+        }
+        else {
+            reportError();
+            return TokenType.ERROR;
+        }
+    }
+
+
+    private TokenType procSimpleExprPrime(TokenType leftType) {
+        if (check(TokenType.PLUS, TokenType.MINUS, TokenType.OR)) {
+            TokenType op = current.getType();
+            advance();
+            TokenType rightType = procTerm();
+            TokenType resultType = checkBinaryOp(op, leftType, rightType);
+            return procSimpleExprPrime(resultType);
+        }
+        return leftType;
+    }
+
+    private TokenType checkBinaryOp(TokenType op, TokenType left, TokenType right) {
+        switch (op) {
+            case PLUS:
+            case MINUS:
+            case MULTIPLY:
+            case DIVIDE:
+                if ((left == TokenType.INT || left == TokenType.FLOAT) &&
+                        (right == TokenType.INT || right == TokenType.FLOAT)) {
+                    return (left == TokenType.FLOAT || right == TokenType.FLOAT) ?
+                            TokenType.FLOAT : TokenType.INT;
+                }
+                break;
+            case OR:
+            case AND:
+            case MOD:
+                if (left == TokenType.INT && right == TokenType.INT) {
+                    return TokenType.INT;
+                }
+                break;
+        }
+        throw new SemanticException( "Operation " + op + " incompatible with types " + left + " and " + right);
+    }
+
+    private boolean isCompatible(TokenType target, TokenType source) {
+        if (target == source) return true;
+        // Allow implicit int to float conversion
+        return (target == TokenType.FLOAT && source == TokenType.INT);
+    }
 
 }
