@@ -37,7 +37,7 @@ public class SyntaticAnalysis {
     }
 
     private void reportError(String message) {
-        throw new SyntaticException(Lexer.currentLine, String.format("Erro sintático: token não esperado \n %s", message));
+        throw new SyntaticException(Lexer.currentLine, String.format("Erro sintático: token não esperado %n %s", message));
     }
 
     private void reportError() {
@@ -90,14 +90,14 @@ public class SyntaticAnalysis {
         Word word = (Word) current;
         String id = word.getLexeme();
         eat(TokenType.IDENTIFIER);
-        symbolTable.addSymbol(id, type, Lexer.currentLine);
+        symbolTable.addSymbol(id, type);
 
         while (current.getType() == TokenType.COMMA) {
             advance();
             Word nextIdent = (Word) current;
             String nextId = nextIdent.getLexeme();
             eat(TokenType.IDENTIFIER);
-            symbolTable.addSymbol(nextId, type, Lexer.currentLine);
+            symbolTable.addSymbol(nextId, type);
         }
     }
 
@@ -158,13 +158,13 @@ public class SyntaticAnalysis {
         Word word = (Word) current;
         String id = word.getLexeme();
         eat(TokenType.IDENTIFIER);
-        TokenType varType = symbolTable.getType(id, Lexer.currentLine);
+        TokenType varType = symbolTable.getType(id);
 
         eat(TokenType.ASSIGN);
         TokenType exprType = procSimpleExpr();
 
         if (!isCompatible(varType, exprType)) {
-            throw new SemanticException ( "Type mismatch: Cannot assign " + exprType + " to " + varType);
+            throw new SemanticException(Lexer.currentLine, "Type mismatch: Cannot assign " + exprType + " to " + varType);
         }
     }
 
@@ -188,7 +188,7 @@ public class SyntaticAnalysis {
     private void procCondition() {
         TokenType type = procExpression();
         if (type != TokenType.INT) {
-            throw new SemanticException("Condition must be boolean-compatible (int type)");
+            throw new SemanticException(Lexer.currentLine, "Condition must be boolean-compatible (int type)");
         }
     }
 
@@ -262,7 +262,7 @@ public class SyntaticAnalysis {
             return;
         }
 
-        throw new SemanticException("Cannot compare " + left + " and " + right + " with " + op);
+        throw new SemanticException(Lexer.currentLine, "Cannot compare " + left + " and " + right + " with " + op);
     }
 
     // simple-expr ::= term simple-expr-prime
@@ -306,10 +306,10 @@ public class SyntaticAnalysis {
             // Handle unary operators
             TokenType type = procFactor();
             if (current.getType() == TokenType.NOT && type != TokenType.INT) {
-                throw new SemanticException("Cannot apply NOT operator to non-integer type");
+                throw new SemanticException(Lexer.currentLine, "Cannot apply NOT operator to non-integer type");
             }
             if (current.getType() == TokenType.MINUS && !(type == TokenType.INT || type == TokenType.FLOAT)) {
-                throw new SemanticException("Cannot apply negation to non-numeric type");
+                throw new SemanticException(Lexer.currentLine, "Cannot apply negation to non-numeric type");
             }
             return type;
         }
@@ -322,7 +322,7 @@ public class SyntaticAnalysis {
             Word word = (Word) current;
             String id = word.getLexeme();
             advance();
-            return symbolTable.getType(id, Lexer.currentLine);
+            return symbolTable.getType(id);
         }
         else if (check(TokenType.INTEGER_CONSTANT)) {
             advance();
@@ -381,7 +381,7 @@ public class SyntaticAnalysis {
                 }
                 break;
         }
-        throw new SemanticException( "Operation " + op + " incompatible with types " + left + " and " + right);
+        throw new SemanticException(Lexer.currentLine, "Operation " + op + " incompatible with types " + left + " and " + right);
     }
 
     private boolean isCompatible(TokenType target, TokenType source) {
