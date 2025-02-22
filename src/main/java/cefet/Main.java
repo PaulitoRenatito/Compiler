@@ -11,7 +11,7 @@ public class Main {
         
         try {
             syntaticAnalysis.procProgram();
-            System.out.println("Programa sintaticamente correto.");
+            System.out.println("Programa semanticamente correto.");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
