@@ -14,13 +14,10 @@ public class SyntaticAnalysis {
 
     private final SymbolTable symbolTable;
 
-
-
     public SyntaticAnalysis(Lexer lex) {
         this.lex = lex;
         this.current = lex.scan();
         this.symbolTable = new SymbolTable();
-
     }
     
     private void advance() {
@@ -33,8 +30,8 @@ public class SyntaticAnalysis {
         if (type == current.getType()) {
             advance();
         } else {
-            String reason = "Expected (..., " + type.toString() + "), found (\"" + 
-                current.toString() + "\", " + current.getType().toString() + ")";
+            String reason = "Expected (..., " + type.toString() + "), found (\"" +
+                    current + "\", " + current.getType().toString() + ")";
             reportError(reason);
         }
     }
@@ -57,7 +54,7 @@ public class SyntaticAnalysis {
     }
 
     // program ::= START [decl-list] stmt-list EXIT
-    public void procProgram(){
+    public void procProgram() {
         eat(TokenType.START);
 
         if (check(TokenType.INT, TokenType.FLOAT, TokenType.STRING)) {
@@ -73,7 +70,7 @@ public class SyntaticAnalysis {
     }
 
     // decl-list ::= decl {decl}
-    private void procDeclList(){
+    private void procDeclList() {
         procDecl();
 
         while (check(TokenType.INT, TokenType.FLOAT, TokenType.STRING)) {
@@ -82,14 +79,14 @@ public class SyntaticAnalysis {
     }
 
     // decl ::= type ident-list ';'
-    private void procDecl(){
+    private void procDecl() {
         TokenType type = procType();
         procIdentList(type);
         eat(TokenType.SEMICOLON);
     }
 
     // ident-list ::= identifier {',' identifier}
-    private void procIdentList(TokenType type){
+    private void procIdentList(TokenType type) {
         Word word = (Word) current;
         String id = word.getLexeme();
         eat(TokenType.IDENTIFIER);
@@ -105,7 +102,7 @@ public class SyntaticAnalysis {
     }
 
     // type ::= INT | FLOAT | STRING
-    private TokenType procType(){
+    private TokenType procType() {
         TokenType type = current.getType ();
         if (check(TokenType.INT, TokenType.FLOAT, TokenType.STRING)) {
             advance();
@@ -117,7 +114,7 @@ public class SyntaticAnalysis {
     }
 
     // stmt-list ::= stmt {stmt}
-    private void procStmtList(){
+    private void procStmtList() {
         procStmt();
 
         while (check(TokenType.IF, TokenType.DO, TokenType.SCAN, TokenType.PRINT, TokenType.IDENTIFIER)) {
@@ -126,7 +123,7 @@ public class SyntaticAnalysis {
     }
 
     // stmt ::= assing-stmt ';' | if-stmt | while-stmt | read-stmt ';' | write-stmt ';'
-    private void procStmt(){
+    private void procStmt() {
         switch (current.getType()) {
             case IDENTIFIER: 
                 procAssignStmt(); 
@@ -157,7 +154,7 @@ public class SyntaticAnalysis {
     }
 
     // assign-stmt ::= identifier '=' simple_expr
-    private void procAssignStmt(){
+    private void procAssignStmt() {
         Word word = (Word) current;
         String id = word.getLexeme();
         eat(TokenType.IDENTIFIER);
@@ -165,6 +162,7 @@ public class SyntaticAnalysis {
 
         eat(TokenType.ASSIGN);
         TokenType exprType = procSimpleExpr();
+
         if (!isCompatible(varType, exprType)) {
             throw new SemanticException ( "Type mismatch: Cannot assign " + exprType + " to " + varType);
         }
@@ -172,7 +170,7 @@ public class SyntaticAnalysis {
 
     // if-stmt ::= IF condition THEN stmt-list END
     //             | IF condition THEN stmt-list else stmt-list END
-    private void procIfStmt(){
+    private void procIfStmt() {
         eat(TokenType.IF);
         procCondition();
         eat(TokenType.THEN);
@@ -187,7 +185,7 @@ public class SyntaticAnalysis {
     }
 
     // condition ::= expression
-    private void procCondition(){
+    private void procCondition() {
         TokenType type = procExpression();
         if (type != TokenType.INT) {
             throw new SemanticException("Condition must be boolean-compatible (int type)");
@@ -195,21 +193,21 @@ public class SyntaticAnalysis {
     }
 
     // while-stmt ::= DO stmt-list stmt-sufix
-    private void procWhileStmt(){
+    private void procWhileStmt() {
         eat(TokenType.DO);
         procStmtList();
         procStmtSufix();
     }
 
     // stmt-sufix ::= WHILE condition END
-    private void procStmtSufix(){
+    private void procStmtSufix() {
         eat(TokenType.WHILE);
         procCondition();
         eat(TokenType.END);
     }
 
     // read-stmt ::= SCAN "(" identifier ")"
-    private void procReadStmt(){
+    private void procReadStmt() {
         eat(TokenType.SCAN);
         eat(TokenType.OPEN_BRACKET);
         eat(TokenType.IDENTIFIER);
@@ -217,7 +215,7 @@ public class SyntaticAnalysis {
     }
 
     // write-stmt ::= PRINT "(" writable ")"
-    private void procWriteStmt(){
+    private void procWriteStmt() {
         eat(TokenType.PRINT);
         eat(TokenType.OPEN_BRACKET);
         procWritable();
@@ -225,7 +223,7 @@ public class SyntaticAnalysis {
     }
 
     // writable ::= simple-expr | literal
-    private void procWritable(){
+    private void procWritable() {
         if(check(TokenType.NOT, TokenType.MINUS, TokenType.IDENTIFIER, TokenType.INTEGER_CONSTANT, TokenType.FLOAT_CONSTANT, TokenType.OPEN_BRACKET)) {
             procSimpleExpr();
         } else {
@@ -268,13 +266,13 @@ public class SyntaticAnalysis {
     }
 
     // simple-expr ::= term simple-expr-prime
-    private TokenType procSimpleExpr(){
+    private TokenType procSimpleExpr() {
         TokenType termType = procTerm();
         return procSimpleExprPrime(termType);
     }
 
     // simple-expr-prime ::= addop term simple-expr-prime | λ
-    private void procSimpleExprPrime(){
+    private void procSimpleExprPrime() {
         if (check(TokenType.PLUS, TokenType.MINUS, TokenType.OR)) {
             advance();
             procTerm();
@@ -297,6 +295,7 @@ public class SyntaticAnalysis {
             TokenType resultType = checkBinaryOp(op, leftType, rightType);
             return procTermPrime(resultType);
         }
+
         return leftType;
     }
 
@@ -358,6 +357,7 @@ public class SyntaticAnalysis {
             TokenType resultType = checkBinaryOp(op, leftType, rightType);
             return procSimpleExprPrime(resultType);
         }
+
         return leftType;
     }
 

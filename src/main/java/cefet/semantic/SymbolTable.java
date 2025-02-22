@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SymbolTable {
-    private final Map<String, TokenType> symbols = new HashMap<> ();
+    private final Map<String, TokenType> symbols = new HashMap<>();
 
     public void addSymbol(String name, TokenType type, int line) {
         if (symbols.containsKey(name)) {
