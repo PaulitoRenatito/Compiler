@@ -103,7 +103,7 @@ public class SyntaticAnalysis {
     /**
      * Process an identifier list
      * <p>ident-list ::= identifier {',' identifier}</p>
-     * @param type
+     * @param type the type of the identifiers
      * @throws SyntaticException if an error is found
      * @throws SemanticException if a semantic error is found
      */
