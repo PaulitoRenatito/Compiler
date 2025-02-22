@@ -53,7 +53,12 @@ public class SyntaticAnalysis {
         return false;
     }
 
-    // program ::= START [decl-list] stmt-list EXIT
+    /**
+     * Start the syntatic analysis
+     * <p>program ::= <strong>START</strong> [decl-list] stmt-list <strong>EXIT</strong></p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     public void procProgram() {
         eat(TokenType.START);
 
@@ -69,7 +74,12 @@ public class SyntaticAnalysis {
         eat(TokenType.EXIT);
     }
 
-    // decl-list ::= decl {decl}
+    /**
+     * Process the declaration list
+     * <p>decl-list ::= decl {decl}</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procDeclList() {
         procDecl();
 
@@ -78,14 +88,25 @@ public class SyntaticAnalysis {
         }
     }
 
-    // decl ::= type ident-list ';'
+    /**
+     * Process a declaration
+     * <p>decl ::= type ident-list ';'</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procDecl() {
         TokenType type = procType();
         procIdentList(type);
         eat(TokenType.SEMICOLON);
     }
 
-    // ident-list ::= identifier {',' identifier}
+    /**
+     * Process an identifier list
+     * <p>ident-list ::= identifier {',' identifier}</p>
+     * @param type
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procIdentList(TokenType type) {
         Word word = (Word) current;
         String id = word.getLexeme();
@@ -101,7 +122,13 @@ public class SyntaticAnalysis {
         }
     }
 
-    // type ::= INT | FLOAT | STRING
+    /**
+     * Process a type
+     * <p>type ::= INT | FLOAT | STRING</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     * @return TokenType
+     */
     private TokenType procType() {
         TokenType type = current.getType ();
         if (check(TokenType.INT, TokenType.FLOAT, TokenType.STRING)) {
@@ -113,7 +140,12 @@ public class SyntaticAnalysis {
         }
     }
 
-    // stmt-list ::= stmt {stmt}
+    /**
+     * Process a statement list
+     * <p>stmt-list ::= stmt {stmt}</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procStmtList() {
         procStmt();
 
@@ -122,7 +154,12 @@ public class SyntaticAnalysis {
         }
     }
 
-    // stmt ::= assing-stmt ';' | if-stmt | while-stmt | read-stmt ';' | write-stmt ';'
+    /**
+     * Process a statement
+     * <p>stmt ::= assing-stmt ';' | if-stmt | while-stmt | read-stmt ';' | write-stmt ';'</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procStmt() {
         switch (current.getType()) {
             case IDENTIFIER: 
@@ -153,7 +190,12 @@ public class SyntaticAnalysis {
         }
     }
 
-    // assign-stmt ::= identifier '=' simple_expr
+    /**
+     * Process an assignment statement
+     * <p>assign-stmt ::= identifier '=' simple_expr</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procAssignStmt() {
         Word word = (Word) current;
         String id = word.getLexeme();
@@ -168,8 +210,13 @@ public class SyntaticAnalysis {
         }
     }
 
-    // if-stmt ::= IF condition THEN stmt-list END
-    //             | IF condition THEN stmt-list else stmt-list END
+    /**
+     * Process an if statement
+     * <p>if-stmt ::= IF condition THEN stmt-list END </p>
+     * <p>          | IF condition THEN stmt-list else stmt-list END</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procIfStmt() {
         eat(TokenType.IF);
         procCondition();
@@ -184,7 +231,12 @@ public class SyntaticAnalysis {
         eat(TokenType.END);
     }
 
-    // condition ::= expression
+    /**
+     * Process a condition
+     * <p>condition ::= expression</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procCondition() {
         TokenType type = procExpression();
         if (type != TokenType.INT) {
@@ -192,21 +244,36 @@ public class SyntaticAnalysis {
         }
     }
 
-    // while-stmt ::= DO stmt-list stmt-sufix
+    /**
+     * Process a while statement
+     * <p>while-stmt ::= DO stmt-list stmt-sufix</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procWhileStmt() {
         eat(TokenType.DO);
         procStmtList();
         procStmtSufix();
     }
 
-    // stmt-sufix ::= WHILE condition END
+    /**
+     * Process a while statement suffix
+     * <p>stmt-sufix ::= WHILE condition END</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procStmtSufix() {
         eat(TokenType.WHILE);
         procCondition();
         eat(TokenType.END);
     }
 
-    // read-stmt ::= SCAN "(" identifier ")"
+    /**
+     * Process a read statement
+     * <p>read-stmt ::= SCAN "(" identifier ")"</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procReadStmt() {
         eat(TokenType.SCAN);
         eat(TokenType.OPEN_BRACKET);
@@ -214,7 +281,12 @@ public class SyntaticAnalysis {
         eat(TokenType.CLOSE_BRACKET);
     }
 
-    // write-stmt ::= PRINT "(" writable ")"
+    /**
+     * Process a write statement
+     * <p>write-stmt ::= PRINT "(" writable ")"</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procWriteStmt() {
         eat(TokenType.PRINT);
         eat(TokenType.OPEN_BRACKET);
@@ -222,7 +294,12 @@ public class SyntaticAnalysis {
         eat(TokenType.CLOSE_BRACKET);
     }
 
-    // writable ::= simple-expr | literal
+    /**
+     * Process a writable
+     * <p>writable ::= simple-expr | literal</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procWritable() {
         if(check(TokenType.NOT, TokenType.MINUS, TokenType.IDENTIFIER, TokenType.INTEGER_CONSTANT, TokenType.FLOAT_CONSTANT, TokenType.OPEN_BRACKET)) {
             procSimpleExpr();
@@ -231,7 +308,13 @@ public class SyntaticAnalysis {
         }
     }
 
-    // expression ::= simple-expr | simple-expr relop simple-expr
+    /**
+     * Process an expression
+     * <p>expression ::= simple-expr | simple-expr relop simple-expr</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     * @return TokenType
+     */
     private TokenType procExpression() {
         TokenType leftType = procSimpleExpr();
 
@@ -265,13 +348,24 @@ public class SyntaticAnalysis {
         throw new SemanticException(Lexer.currentLine, "Cannot compare " + left + " and " + right + " with " + op);
     }
 
-    // simple-expr ::= term simple-expr-prime
+    /**
+     * Process a simple expression
+     * <p>simple-expr ::= term simple-expr-prime</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     * @return TokenType
+     */
     private TokenType procSimpleExpr() {
         TokenType termType = procTerm();
         return procSimpleExprPrime(termType);
     }
 
-    // simple-expr-prime ::= addop term simple-expr-prime | λ
+    /**
+     * Process a simple expression prime
+     * <p>simple-expr-prime ::= addop term simple-expr-prime | λ</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     */
     private void procSimpleExprPrime() {
         if (check(TokenType.PLUS, TokenType.MINUS, TokenType.OR)) {
             advance();
@@ -281,12 +375,29 @@ public class SyntaticAnalysis {
     }
 
     // term ::= factor-a term-prime
+
+    /**
+     * Process a term
+     * <p>term ::= factor-a term-prime</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     * @return TokenType
+     */
     private TokenType procTerm() {
         TokenType factorType = procFactorA();
         return procTermPrime(factorType);
     }
 
     // term-prime ::= mulop factor-a term-prime | λ
+
+    /**
+     * Process a term prime
+     * <p>term-prime ::= mulop factor-a term-prime | λ</p>
+     * @param leftType the type of the left factor
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     * @return TokenType
+     */
     private TokenType procTermPrime(TokenType leftType) {
         if (check(TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.MOD, TokenType.AND)) {
             TokenType op = current.getType();
@@ -299,7 +410,13 @@ public class SyntaticAnalysis {
         return leftType;
     }
 
-    // factor-a ::= factor | "!" factor | "-" factor
+    /**
+     * Process a factor A
+     * <p>factor-a ::= factor | "!" factor | "-" factor</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     * @return TokenType
+     */
     private TokenType procFactorA() {
         if (check(TokenType.NOT, TokenType.MINUS)) {
             advance();
@@ -317,6 +434,14 @@ public class SyntaticAnalysis {
     }
 
     // factor ::= identifier | constant | "(" expression ")"
+
+    /**
+     * Process a factor
+     * <p>factor ::= identifier | constant | "(" expression ")"</p>
+     * @throws SyntaticException if an error is found
+     * @throws SemanticException if a semantic error is found
+     * @return TokenType
+     */
     private TokenType procFactor() {
         if (check(TokenType.IDENTIFIER)) {
             Word word = (Word) current;
@@ -347,7 +472,6 @@ public class SyntaticAnalysis {
             return TokenType.ERROR;
         }
     }
-
 
     private TokenType procSimpleExprPrime(TokenType leftType) {
         if (check(TokenType.PLUS, TokenType.MINUS, TokenType.OR)) {
