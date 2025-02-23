@@ -83,6 +83,7 @@ public class CodeGenerator {
 
         code.append("    new java/util/Scanner\n");
         code.append("    dup\n");
+        code.append("    getstatic java/lang/System/in Ljava/io/InputStream;\n");
         code.append("    invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V\n");
         code.append("    invokevirtual java/util/Scanner/nextFloat()F\n");
         code.append("    ").append(getStoreInstruction(type)).append(" ").append(i).append("\n\n");
