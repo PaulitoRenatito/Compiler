@@ -488,6 +488,9 @@ public class SyntaticAnalysis {
     private TokenType checkBinaryOp(TokenType op, TokenType left, TokenType right) {
         switch (op) {
             case PLUS:
+                if (left == TokenType.STRING && right == TokenType.STRING) {
+                    return TokenType.STRING;
+                }
             case MINUS:
             case MULTIPLY:
             case DIVIDE:
