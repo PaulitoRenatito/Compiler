@@ -9,6 +9,7 @@ import java.util.Map;
 
 @Getter
 public class SymbolTable {
+
     private final Map<String, TokenType> symbols = new HashMap<>();
 
     public void addSymbol(String name, TokenType type) {

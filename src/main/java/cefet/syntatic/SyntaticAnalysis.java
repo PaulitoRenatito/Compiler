@@ -1,11 +1,13 @@
 package cefet.syntatic;
 
+import cefet.generator.CodeGenerator;
 import cefet.lexical.Lexer;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
 import cefet.lexical.token.Word;
 import cefet.semantic.SemanticException;
 import cefet.semantic.SymbolTable;
+import lombok.Getter;
 
 public class SyntaticAnalysis {
     
@@ -14,10 +16,14 @@ public class SyntaticAnalysis {
 
     private final SymbolTable symbolTable;
 
+    @Getter
+    private final CodeGenerator codeGenerator;
+
     public SyntaticAnalysis(Lexer lex) {
         this.lex = lex;
         this.current = lex.scan();
         this.symbolTable = new SymbolTable();
+        this.codeGenerator = new CodeGenerator(symbolTable);
     }
     
     private void advance() {
@@ -68,6 +74,8 @@ public class SyntaticAnalysis {
             reportError("Expected (..., INT, FLOAT, STRING), found (\"" + 
                 current.toString() + "\", " + current.getType().toString() + ")");
         }
+
+        codeGenerator.initializeVarIndices();
 
         procStmtList();
 
@@ -208,6 +216,8 @@ public class SyntaticAnalysis {
         if (!isCompatible(varType, exprType)) {
             throw new SemanticException(Lexer.currentLine, "Type mismatch: Cannot assign " + exprType + " to " + varType);
         }
+
+        codeGenerator.generateAssignment(id, exprType);
     }
 
     /**
@@ -219,15 +229,26 @@ public class SyntaticAnalysis {
      */
     private void procIfStmt() {
         eat(TokenType.IF);
-        procCondition();
+        procCondition(); // Deve gerar código que deixe 0 ou 1 na pilha
+
+        String labels = codeGenerator.generateIfElse();
+        String elseLabel = labels.split(",")[0];
+        String endLabel = labels.split(",")[1];
+
+        // Bloco THEN
         eat(TokenType.THEN);
         procStmtList();
 
-        if (check( TokenType.ELSE)) {
+        codeGenerator.getCode().append("    goto ").append(endLabel).append("\n");
+        codeGenerator.getCode().append(elseLabel).append(":\n");
+
+        // Bloco ELSE (se existir)
+        if (check(TokenType.ELSE)) {
             advance();
             procStmtList();
         }
 
+        codeGenerator.getCode().append(endLabel).append(":\n");
         eat(TokenType.END);
     }
 
@@ -252,8 +273,17 @@ public class SyntaticAnalysis {
      */
     private void procWhileStmt() {
         eat(TokenType.DO);
+
+        String labels = codeGenerator.generateWhile();
+        String startLabel = labels.split(",")[0];
+        String endLabel = labels.split(",")[1];
+
         procStmtList();
+
         procStmtSufix();
+
+        codeGenerator.getCode().append("    goto ").append(startLabel).append("\n");
+        codeGenerator.getCode().append("    ").append(endLabel).append(":\n");
     }
 
     /**
@@ -403,6 +433,9 @@ public class SyntaticAnalysis {
             TokenType op = current.getType();
             advance();
             TokenType rightType = procFactorA();
+
+            codeGenerator.generateArithmetic(op, leftType);
+
             TokenType resultType = checkBinaryOp(op, leftType, rightType);
             return procTermPrime(resultType);
         }
