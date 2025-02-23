@@ -1,6 +1,6 @@
 start
-    int a, c;
-    float d, e;
+    int a, b;
+    float c, d, e, val, response;
     a = 0; d = 3.5;
     c = d / 1.2;
 
@@ -14,5 +14,5 @@ start
     e = val + 2.2;
     print ({E: });
     print (e);
-    a = (b + c + a)/2;
+    response = (b + c + a)/2;
 exit
