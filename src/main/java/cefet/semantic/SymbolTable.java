@@ -2,10 +2,12 @@ package cefet.semantic;
 
 import cefet.lexical.Lexer;
 import cefet.lexical.token.TokenType;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public class SymbolTable {
     private final Map<String, TokenType> symbols = new HashMap<>();
 
