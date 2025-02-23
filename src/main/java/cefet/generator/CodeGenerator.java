@@ -27,10 +27,6 @@ public class CodeGenerator {
         for (String var : symbolTable.getSymbols().keySet()) {
             varIndices.put(var, currentLocalIndex++);
         }
-
-        symbolTable.getSymbols().forEach((var, type) -> {
-            System.out.println("Variável: " + var + " - Tipo: " + type);
-        });
     }
 
     public String generate() {
