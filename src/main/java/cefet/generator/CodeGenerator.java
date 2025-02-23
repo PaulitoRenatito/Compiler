@@ -54,10 +54,13 @@ public class CodeGenerator {
             case MINUS -> type == TokenType.INT ? "isub" : "fsub";
             case MULTIPLY -> type == TokenType.INT ? "imul" : "fmul";
             case DIVIDE -> type == TokenType.INT ? "idiv" : "fdiv";
-            case MOD -> "irem"; // Operador %
-            default -> throw new IllegalArgumentException("Operador inválido: " + op);
+            case MOD -> "irem";
+            default -> null;
         };
-        code.append("    ").append(instruction).append("\n");
+
+        if (instruction != null) {
+            code.append("    ").append(instruction).append("\n");
+        }
     }
 
     // Geração de condicional (if-else)
