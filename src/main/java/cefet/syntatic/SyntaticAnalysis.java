@@ -2,6 +2,7 @@ package cefet.syntatic;
 
 import cefet.generator.CodeGenerator;
 import cefet.lexical.Lexer;
+import cefet.lexical.token.IntegerNumberToken;
 import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
 import cefet.lexical.token.Word;
@@ -479,10 +480,12 @@ public class SyntaticAnalysis {
             return symbolTable.getType(id);
         }
         else if (check(TokenType.INTEGER_CONSTANT)) {
+            codeGenerator.generatePushConstant(current);
             advance();
             return TokenType.INT;
         }
         else if (check(TokenType.FLOAT_CONSTANT)) {
+            codeGenerator.generatePushConstant(current);
             advance();
             return TokenType.FLOAT;
         }

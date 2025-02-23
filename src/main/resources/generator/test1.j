@@ -5,23 +5,28 @@
     .limit stack 100
     .limit locals 8
 
+    ldc 2.0
     fstore 1
 
+    ldc 1
     istore 5
 
     new java/util/Scanner
     dup
+    getstatic java/lang/System/in Ljava/io/InputStream;
     invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V
     invokevirtual java/util/Scanner/nextFloat()F
     fstore 2
 
     new java/util/Scanner
     dup
+    getstatic java/lang/System/in Ljava/io/InputStream;
     invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V
     invokevirtual java/util/Scanner/nextFloat()F
     fstore 6
 
     fmul
+    ldc 1
     fdiv
     fstore 0
 

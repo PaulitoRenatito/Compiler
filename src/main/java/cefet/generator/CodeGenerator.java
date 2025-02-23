@@ -1,8 +1,6 @@
 package cefet.generator;
 
-import cefet.lexical.token.Token;
-import cefet.lexical.token.TokenType;
-import cefet.lexical.token.Word;
+import cefet.lexical.token.*;
 import cefet.semantic.SymbolTable;
 import lombok.Getter;
 
@@ -25,7 +23,8 @@ public class CodeGenerator {
         varIndices.clear();
         currentLocalIndex = 0;
         for (String var : symbolTable.getSymbols().keySet()) {
-            varIndices.put(var, currentLocalIndex++);
+            varIndices.put(var, currentLocalIndex);
+            currentLocalIndex++;
         }
     }
 
@@ -111,5 +110,13 @@ public class CodeGenerator {
             case STRING -> "astore";
             default -> throw new IllegalArgumentException("Tipo inválido: " + type);
         };
+    }
+
+    public void generatePushConstant(Token current) {
+        if (current instanceof IntegerNumberToken intNumber) {
+            code.append("    ldc ").append((intNumber.value)).append("\n");
+        } else if (current instanceof FloatNumberToken floatNumber) {
+            code.append("    ldc ").append((floatNumber.value)).append("\n");
+        }
     }
 }
