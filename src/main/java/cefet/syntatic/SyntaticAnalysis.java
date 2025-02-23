@@ -307,6 +307,7 @@ public class SyntaticAnalysis {
     private void procReadStmt() {
         eat(TokenType.SCAN);
         eat(TokenType.OPEN_BRACKET);
+        codeGenerator.generateScan((Word) current);
         eat(TokenType.IDENTIFIER);
         eat(TokenType.CLOSE_BRACKET);
     }
@@ -320,6 +321,7 @@ public class SyntaticAnalysis {
     private void procWriteStmt() {
         eat(TokenType.PRINT);
         eat(TokenType.OPEN_BRACKET);
+        codeGenerator.generatePrint((Word) current);
         procWritable();
         eat(TokenType.CLOSE_BRACKET);
     }
@@ -404,8 +406,6 @@ public class SyntaticAnalysis {
         }
     }
 
-    // term ::= factor-a term-prime
-
     /**
      * Process a term
      * <p>term ::= factor-a term-prime</p>
@@ -417,8 +417,6 @@ public class SyntaticAnalysis {
         TokenType factorType = procFactorA();
         return procTermPrime(factorType);
     }
-
-    // term-prime ::= mulop factor-a term-prime | λ
 
     /**
      * Process a term prime
@@ -465,8 +463,6 @@ public class SyntaticAnalysis {
         }
         return procFactor();
     }
-
-    // factor ::= identifier | constant | "(" expression ")"
 
     /**
      * Process a factor

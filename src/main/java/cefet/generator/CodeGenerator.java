@@ -1,6 +1,8 @@
 package cefet.generator;
 
+import cefet.lexical.token.Token;
 import cefet.lexical.token.TokenType;
+import cefet.lexical.token.Word;
 import cefet.semantic.SymbolTable;
 import lombok.Getter;
 
@@ -25,6 +27,10 @@ public class CodeGenerator {
         for (String var : symbolTable.getSymbols().keySet()) {
             varIndices.put(var, currentLocalIndex++);
         }
+
+        symbolTable.getSymbols().forEach((var, type) -> {
+            System.out.println("Variável: " + var + " - Tipo: " + type);
+        });
     }
 
     public String generate() {
@@ -43,7 +49,7 @@ public class CodeGenerator {
         Integer index = varIndices.get(varName);
         String storeOp = getStoreInstruction(exprType);
 
-        code.append("    ").append(storeOp).append(" ").append(index).append("\n");
+        code.append("    ").append(storeOp).append(" ").append(index).append("\n\n");
     }
 
     // Geração de operações aritméticas
@@ -73,6 +79,32 @@ public class CodeGenerator {
         String endLabel = "L" + labelCounter++;
         code.append("    ").append(startLabel).append(":\n");
         return startLabel + "," + endLabel;
+    }
+
+    public void generateScan(Word word) {
+        TokenType type = symbolTable.getType(word.getLexeme());
+        Integer i = varIndices.get(word.getLexeme());
+
+        code.append("    new java/util/Scanner\n");
+        code.append("    dup\n");
+        code.append("    invokespecial java/util/Scanner/<init>(Ljava/io/InputStream;)V\n");
+        code.append("    invokevirtual java/util/Scanner/nextFloat()F\n");
+        code.append("    ").append(getStoreInstruction(type)).append(" ").append(i).append("\n\n");
+    }
+
+    public void generatePrint(Word word) {
+        Integer i = varIndices.get(word.getLexeme());
+
+        if (i == null) {
+            code.append("    getstatic java/lang/System/out Ljava/io/PrintStream;\n");
+            code.append("    ").append("ldc ").append("\"").append(word.getLexeme()).append("\"").append("\n");
+            code.append("    invokevirtual java/io/PrintStream/print(Ljava/lang/String;)V\n\n");
+            return;
+        }
+
+        code.append("    getstatic java/lang/System/out Ljava/io/PrintStream;\n");
+        code.append("    ").append("fload ").append(i).append("\n");
+        code.append("    invokevirtual java/io/PrintStream/print(F)V\n\n");
     }
 
     private String getStoreInstruction(TokenType type) {
