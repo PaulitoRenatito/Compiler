@@ -512,9 +512,7 @@ public class SyntaticAnalysis {
     }
 
     private boolean isCompatible(TokenType target, TokenType source) {
-        if (target == source) return true;
-        // Allow implicit int to float conversion
-        return (target == TokenType.FLOAT && source == TokenType.INT);
+        return (target == source); //can just be the same type no implicit conversions
     }
 
 }
